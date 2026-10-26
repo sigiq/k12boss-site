@@ -1,0 +1,22 @@
+{
+  "CallerReference": "k12boss-1792972610",
+  "Aliases": {"Quantity": 2, "Items": ["k12boss.com", "www.k12boss.com"]},
+  "DefaultRootObject": "index.html",
+  "Origins": {"Quantity": 1, "Items": [{
+    "Id": "s3", "DomainName": "k12boss.com-site.s3.us-east-1.amazonaws.com",
+    "OriginAccessControlId": "E2XL1XB3V8QA53",
+    "S3OriginConfig": {"OriginAccessIdentity": ""}
+  }]},
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "s3", "ViewerProtocolPolicy": "redirect-to-https",
+    "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+    "Compress": true,
+    "AllowedMethods": {"Quantity": 2, "Items": ["GET", "HEAD"]}
+  },
+  "CustomErrorResponses": {"Quantity": 1, "Items": [{"ErrorCode": 403, "ResponsePagePath": "/index.html", "ResponseCode": "200", "ErrorCachingMinTTL": 60}]},
+  "ViewerCertificate": {"ACMCertificateArn": "arn:aws:acm:us-east-1:456318992606:certificate/db94a61b-58f1-4def-86c0-c92a7d93f501", "SSLSupportMethod": "sni-only", "MinimumProtocolVersion": "TLSv1.2_2021"},
+  "HttpVersion": "http2and3",
+  "PriceClass": "PriceClass_100",
+  "Enabled": true,
+  "Comment": "K12 BOSS landing page"
+}

@@ -1,0 +1,718 @@
+<title>K12 BOSS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: graph-paper yellow band opens and closes the page; between them a single
+   1160px column of sections on cool paper. Display type is tall and condensed,
+   like the ceiling it breaks through. */
+:root {
+  --bus: #FFC21A;
+  --ink: #15161B;
+  --cream: #F3F4EF;
+  --bg: #F3F4EF;
+  --surface: #FFFFFF;
+  --fg: #15161B;
+  --muted: #565A63;
+  --line: rgba(21, 22, 27, 0.14);
+  --pen: #CF321A;
+  --rule: rgba(47, 91, 211, 0.20);
+  --grid-on-bus: rgba(21, 22, 27, 0.075);
+
+  --font-display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.125rem;
+  --step-1: 1.375rem;
+  --step-2: clamp(1.6rem, 2.4vw, 2rem);
+  --step-3: clamp(2.4rem, 5vw, 3.9rem);
+  --step-4: clamp(3.6rem, 11.5vw, 9.25rem);
+  --wrap: 1160px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111217; --surface: #1A1C22; --fg: #ECEDE6; --muted: #A3A6AE;
+    --line: rgba(236, 237, 230, 0.16); --pen: #FF6B4E; --rule: rgba(120, 155, 255, 0.16);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111217; --surface: #1A1C22; --fg: #ECEDE6; --muted: #A3A6AE;
+  --line: rgba(236, 237, 230, 0.16); --pen: #FF6B4E; --rule: rgba(120, 155, 255, 0.16);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
+a { color: inherit; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+
+.wrap {
+  width: 100%;
+  max-width: calc(var(--wrap) + 2 * 32px);
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 720px) {
+  .wrap {
+    padding-left: max(32px, env(safe-area-inset-left, 0px));
+    padding-right: max(32px, env(safe-area-inset-right, 0px));
+  }
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: 0.005em;
+}
+
+/* ---------- Yellow bands (hero + community) ---------- */
+.band-bus {
+  background-color: var(--bus);
+  background-image:
+    linear-gradient(var(--grid-on-bus) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-on-bus) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+  color: var(--ink);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 22px;
+}
+.topbar img { height: 40px; width: auto; }
+.launch-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid var(--ink);
+  padding: 6px 12px;
+  background: var(--bus);
+  white-space: nowrap;
+}
+.launch-pill .dot { width: 8px; height: 8px; background: var(--pen); border-radius: 50%; }
+@media (max-width: 480px) { .launch-pill .when { display: none; } }
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: end;
+  padding-block: clamp(36px, 6vw, 80px) clamp(56px, 8vw, 104px);
+}
+.hero-copy { min-width: 0; display: grid; gap: 28px; }
+@media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); align-items: start; } }
+
+/* The ceiling: an intact bar that snaps on load. Resting state is the broken one. */
+.ceiling { position: relative; height: clamp(16px, 2vw, 26px); margin-top: clamp(28px, 4vw, 48px); }
+.ceiling span { position: absolute; top: 0; height: 100%; background: var(--ink); }
+.slab-l { left: 0; width: 54%; clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%); }
+.slab-r {
+  left: 61%; right: 0;
+  clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%);
+  transform-origin: 0 50%;
+  transform: translateY(-55%) rotate(-3.2deg);
+  animation: lift-slab 900ms cubic-bezier(.2, .9, .25, 1.15) 350ms both;
+}
+.shard { width: clamp(16px, 2vw, 26px); clip-path: polygon(0 30%, 75% 0, 100% 55%, 22% 100%); }
+.shard-1 { left: 55.5%; transform: translate(0, -110%) rotate(-24deg); animation: lift-1 900ms cubic-bezier(.2, .9, .25, 1.1) 350ms both; }
+.shard-2 { left: 58.2%; width: clamp(10px, 1.2vw, 16px); transform: translate(0, -190%) rotate(18deg); animation: lift-2 1000ms cubic-bezier(.2, .9, .25, 1.1) 350ms both; }
+@keyframes lift-slab { from { transform: none; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); left: 54%; } }
+@keyframes lift-1 { from { transform: none; } }
+@keyframes lift-2 { from { transform: none; } }
+
+.hero h1 { font-size: var(--step-4); }
+.hero h1 .line { display: block; }
+.lede { font-size: var(--step-1); line-height: 1.5; max-width: 34ch; }
+
+.notify { display: grid; gap: 10px; max-width: 520px; }
+.notify-row { display: flex; gap: 0; flex-wrap: wrap; }
+.notify label { font-weight: 700; }
+.notify input {
+  flex: 1 1 240px;
+  min-width: 0;
+  font: inherit;
+  font-size: 1.05rem;
+  padding: 14px 16px;
+  border: 2px solid var(--ink);
+  border-right-width: 0;
+  background: #FFFFFF;
+  color: var(--ink);
+  border-radius: 0;
+}
+.notify button, .btn {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 12px 22px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--bus);
+  cursor: pointer;
+  border-radius: 0;
+}
+.notify button:hover { background: #000; }
+@media (max-width: 460px) {
+  .notify input { border-right-width: 2px; flex-basis: 100%; }
+  .notify button { flex: 1 1 100%; border-top-width: 0; }
+}
+.notify .msg { font-size: var(--step--1); min-height: 1.4em; }
+.notify .msg[data-state="ok"] { font-weight: 700; }
+:focus-visible { outline: 3px solid var(--pen); outline-offset: 3px; }
+.band-bus :focus-visible { outline-color: var(--ink); }
+
+.acro {
+  background: var(--ink);
+  color: var(--cream);
+  padding: clamp(24px, 3vw, 36px);
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  box-shadow: 10px 10px 0 rgba(21, 22, 27, 0.18);
+}
+.acro .eyebrow { color: var(--bus); margin-bottom: 14px; }
+.acro .row {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+.acro .L { color: var(--bus); font-weight: 900; }
+.acro .for { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; padding-block: 4px; }
+.acro .foot { margin-top: 18px; font-size: var(--step--1); opacity: 0.8; line-height: 1.5; }
+
+/* ---------- Sections ---------- */
+section.block { padding-block: clamp(72px, 10vw, 128px); }
+section.block + section.block { border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 16px; margin-bottom: clamp(36px, 5vw, 56px); max-width: 860px; }
+.sec-head .eyebrow { color: var(--muted); }
+.sec-head h2 { font-size: var(--step-3); }
+.sec-head p { color: var(--muted); max-width: 62ch; font-size: var(--step-1); line-height: 1.5; }
+
+/* Thesis */
+.ledger { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 4vw, 56px); }
+@media (max-width: 760px) { .ledger { grid-template-columns: minmax(0, 1fr); } }
+.ledger h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: var(--step-2); padding-bottom: 12px; border-bottom: 3px solid var(--fg); }
+.ledger ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.ledger li { padding-block: 18px; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+.ledger li strong { font-size: var(--step-1); line-height: 1.3; }
+.ledger li span { color: var(--muted); }
+.ledger .cost h3 { border-bottom-color: var(--pen); }
+
+/* Episode beats: a real sequence, so numbered */
+.beats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: beat; }
+@media (max-width: 900px) { .beats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; } }
+@media (max-width: 520px) { .beats { grid-template-columns: minmax(0, 1fr); } }
+.beats li { counter-increment: beat; display: grid; gap: 10px; align-content: start; padding-right: 24px; min-width: 0; }
+.beats li::before {
+  content: counter(beat);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 4.5rem;
+  line-height: 0.85;
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--fg);
+}
+.beats li:nth-child(2)::before { border-bottom-style: dashed; border-bottom-color: var(--pen); }
+.beats h3 { font-size: var(--step-1); line-height: 1.25; }
+.beats p { color: var(--muted); }
+
+/* Is / isn't: graded in red pen */
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 4vw, 56px); }
+@media (max-width: 760px) { .grade { grid-template-columns: minmax(0, 1fr); } }
+.grade h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: var(--step-2); margin-bottom: 8px; }
+.grade ul { list-style: none; margin: 0; padding: 0; }
+.grade li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding-block: 14px; border-bottom: 1px solid var(--line); font-size: var(--step-1); line-height: 1.35; align-items: start; }
+.grade svg { width: 30px; height: 30px; color: var(--pen); margin-top: -2px; }
+.grade .no li span {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--pen);
+  text-decoration-thickness: 3px;
+}
+
+/* Season 1 voices */
+.voices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 28px; }
+@media (max-width: 1000px) { .voices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .voices { grid-template-columns: minmax(0, 1fr); } }
+.voice { border-top: 3px solid var(--fg); padding-top: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.voice h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: 1.75rem; line-height: 1; }
+.voice .role { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); line-height: 1.45; }
+.voice p { font-size: 1.02rem; line-height: 1.55; }
+.season-note { margin-top: 44px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; color: var(--muted); }
+.nw { white-space: nowrap; }
+.tag { border: 2px dashed var(--muted); padding: 4px 10px; font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Workshop: ruled index cards */
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+@media (max-width: 900px) { .cards { grid-template-columns: minmax(0, 1fr); max-width: 560px; } }
+.card {
+  background: var(--surface);
+  box-shadow: 0 1px 0 var(--line), 0 10px 24px -14px rgba(0, 0, 0, 0.35);
+  padding: 22px 24px 26px;
+  display: grid;
+  gap: 0;
+  align-content: start;
+  min-width: 0;
+  position: relative;
+}
+.card:nth-child(1) { transform: rotate(-0.6deg); }
+.card:nth-child(3) { transform: rotate(0.5deg); }
+.card .meta { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); height: 22px; }
+.card h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: 1.8rem; line-height: 1; padding-bottom: 12px; border-bottom: 2px solid var(--pen); height: 48px; display: flex; align-items: end; }
+.card p { line-height: 32px; font-size: 1.02rem; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--rule) 31px, var(--rule) 32px); }
+.workshop-foot { margin-top: 40px; max-width: 62ch; color: var(--muted); }
+
+/* Audience */
+.who { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+@media (max-width: 900px) { .who { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .who { grid-template-columns: minmax(0, 1fr); } }
+.who div { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.who h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: 1.9rem; line-height: 1; }
+.who h3::before { content: ""; display: block; width: 28px; height: 8px; background: var(--bus); margin-bottom: 14px; }
+.who p { color: var(--muted); }
+
+/* Hosts */
+.hosts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 5vw, 72px); }
+@media (max-width: 800px) { .hosts { grid-template-columns: minmax(0, 1fr); } }
+.host { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.host h3 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: clamp(2.2rem, 4vw, 3rem); line-height: 0.95; }
+.host .role { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.host blockquote { margin: 12px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); font-size: var(--step-1); line-height: 1.45; }
+.host blockquote::before { content: "\201C"; font-family: var(--font-display); font-weight: 900; font-size: 3.4rem; line-height: 0.4; display: block; color: var(--pen); margin-bottom: 4px; transform: translateY(14px); }
+
+/* Community band */
+.community { padding-block: clamp(72px, 10vw, 120px); }
+.community-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: end; }
+@media (max-width: 860px) { .community-grid { grid-template-columns: minmax(0, 1fr); align-items: start; } }
+.community h2 { font-size: var(--step-3); margin-bottom: 18px; }
+.community p { font-size: var(--step-1); line-height: 1.5; max-width: 40ch; }
+.join-card { background: var(--cream); color: var(--ink); border: 2px solid var(--ink); box-shadow: 10px 10px 0 rgba(21, 22, 27, 0.18); padding: clamp(22px, 3vw, 32px); min-width: 0; }
+.join { display: grid; gap: 16px; }
+.join h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: 1.9rem; line-height: 1; }
+.join .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 520px) { .join .pair { grid-template-columns: minmax(0, 1fr); } }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font-weight: 700; font-size: 0.95rem; }
+.field label small { font-weight: 400; color: #565A63; }
+.field input, .field select {
+  width: 100%; min-width: 0; font: inherit; font-size: 1rem; padding: 12px 14px;
+  border: 2px solid var(--ink); border-radius: 0; background: #FFFFFF; color: var(--ink);
+}
+.field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); background-position: calc(100% - 20px) 52%, calc(100% - 14px) 52%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 36px; }
+.join button { justify-self: start; }
+.join .msg { font-size: var(--step--1); min-height: 1.4em; color: var(--pen); font-weight: 700; }
+.join-done { display: grid; gap: 10px; }
+.join-done h3 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: 2.4rem; line-height: 0.95; }
+.join-done p { font-size: var(--step-0); max-width: 44ch; }
+
+/* Footer */
+footer.site { background: var(--ink); color: var(--cream); padding-block: 48px; border-top: 1px solid rgba(243, 244, 239, 0.08); }
+.foot-grid { display: flex; flex-wrap: wrap; gap: 24px 48px; align-items: center; justify-content: space-between; }
+.foot-grid img { height: 34px; width: auto; }
+.foot-text { display: grid; gap: 4px; min-width: 0; }
+.foot-grid p { font-size: var(--step--1); opacity: 0.75; }
+.foot-grid a { color: var(--bus); text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slab-r, .shard-1, .shard-2 { animation: none; }
+}
+</style>
+
+<header class="band-bus">
+  <div class="wrap">
+    <nav class="topbar" aria-label="Site">
+      <img src="assets/logo.svg" alt="K12 BOSS" width="263" height="96">
+      <span class="launch-pill eyebrow"><span class="dot" aria-hidden="true"></span><span id="countdown">Episode 1</span><span class="when">· Nov 15</span></span>
+    </nav>
+
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">A podcast for K-12 educators · Launching November 15, 2026</p>
+        <div class="ceiling" aria-hidden="true">
+          <span class="slab-l"></span><span class="shard shard-1"></span><span class="shard shard-2"></span><span class="slab-r"></span>
+        </div>
+        <h1 class="display"><span class="line">The ceiling</span><span class="line">is gone.</span></h1>
+        <p class="lede">With AI, a student can describe an idea in plain English and have working software by the end of class. K12 BOSS is about what that means for every school, and the educators already making it happen.</p>
+
+        <form class="notify signup" id="notify-hero" data-list="Launch" novalidate>
+          <label for="email-hero">Get episode 1 in your inbox on launch day</label>
+          <div class="notify-row">
+            <input id="email-hero" name="email" type="email" autocomplete="email" placeholder="you@school.org" required>
+            <button type="submit">Notify me</button>
+          </div>
+          <p class="msg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <aside class="acro" aria-label="What BOSS stands for">
+        <p class="eyebrow">K12 BOSS stands for</p>
+        <div class="row"><span class="L">B</span>iggest</div>
+        <div class="row"><span class="L">O</span>pportunity</div>
+        <div class="for">for</div>
+        <div class="row"><span class="L">S</span>tudent</div>
+        <div class="row"><span class="L">S</span>uccess</div>
+        <p class="foot">Building real software used to take years of training. Now any student can do it. We think that is the biggest opportunity for student success in <span class="nw">K-12</span> right now.</p>
+      </aside>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="block" id="why">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Why this show</p>
+        <h2 class="display">The biggest opportunity in <span class="nw">K-12</span> is also its biggest opportunity cost</h2>
+        <p>Schools weren't designed for a world where any student can build software. No test score, ranking or funding formula pushes them to adapt. So change depends on the educators who move first, and on everyone else seeing what they did.</p>
+      </div>
+      <div class="ledger">
+        <div class="gain">
+          <h3>What's possible now</h3>
+          <ul>
+            <li><strong>Students build real things.</strong><span>Apps, games and tools for their families, schools and towns, in days instead of years.</span></li>
+            <li><strong>It teaches the skills schools already promise.</strong><span>Problem-solving, creativity, collaboration and communication grow fastest through real work for a real audience.</span></li>
+            <li><strong>Every student gets to build.</strong><span>You no longer need years of syntax before your idea counts. Computing stops being only for future engineers.</span></li>
+            <li><strong>New paths open up.</strong><span>A student who can build something end to end has another route to a career, with or without a degree.</span></li>
+          </ul>
+        </div>
+        <div class="cost">
+          <h3>What waiting costs</h3>
+          <ul>
+            <li><strong>Nothing in the system rewards it.</strong><span>Subjects that are tested and funded get taught. This one isn't, so it rarely happens on its own.</span></li>
+            <li><strong>The gap grows every semester.</strong><span>What students can do with these tools keeps pulling away from what school is set up to teach.</span></li>
+            <li><strong>Educators can't teach what they haven't seen.</strong><span>Most teachers haven't watched a student build with AI yet. Seeing it is what changes minds.</span></li>
+            <li><strong>Some kids will learn it anyway.</strong><span>Students with tech-savvy parents will pick this up at home. Everyone else is counting on school.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="format">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">How every episode works</p>
+        <h2 class="display">Real people, honest obstacles, one thing to try</h2>
+      </div>
+      <ol class="beats">
+        <li><h3>The opportunity</h3><p>A classroom, district or program where students are already building with AI.</p></li>
+        <li><h3>What's in the way</h3><p>Time, money, policy, fear. Our guests say plainly what made it hard.</p></li>
+        <li><h3>How they moved anyway</h3><p>What they actually did, in their own words, so you can borrow it.</p></li>
+        <li><h3>Your turn</h3><p>One small project to run with one student or one class this week.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block" id="what">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">What to expect</p>
+        <h2 class="display">Built for Monday morning</h2>
+      </div>
+      <div class="grade">
+        <div class="yes">
+          <h3>K12 BOSS is</h3>
+          <ul>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5l6.5 7L27 6"/></svg><span>Educators and students who are building real software right now</span></li>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5l6.5 7L27 6"/></svg><span>Practical, with something to try at the end of every episode</span></li>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5l6.5 7L27 6"/></svg><span>Honest about what's hard, from budgets to bans</span></li>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5l6.5 7L27 6"/></svg><span>A community where teachers share what their students made</span></li>
+          </ul>
+        </div>
+        <div class="no">
+          <h3>K12 BOSS isn't</h3>
+          <ul>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M8 8l16 16M24 8L8 24"/></svg><span>A weekly roundup of AI news</span></li>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M8 8l16 16M24 8L8 24"/></svg><span>Hype about tools that will change everything</span></li>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M8 8l16 16M24 8L8 24"/></svg><span>Another debate about robots taking jobs</span></li>
+            <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M8 8l16 16M24 8L8 24"/></svg><span>A tidy curriculum with every answer</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="season">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Season 1</p>
+        <h2 class="display">Eight people already doing the work</h2>
+        <p>A principal in Silicon Valley, a rural innovation director, the author of an AP course, a founder and the teachers putting it into practice.</p>
+      </div>
+      <div class="voices">
+        <article class="voice">
+          <h3>Dora Palfi</h3>
+          <p class="role">Co-founder &amp; CEO, Imagi</p>
+          <p>Built a company on the idea that every kid should get to make technology. Now she's putting AI build tools in students' hands.</p>
+        </article>
+        <article class="voice">
+          <h3>Kelly Schuster-Paredes</h3>
+          <p class="role">CS teacher, Pine Crest School · Co-host, Teaching Python</p>
+          <p>Her middle schoolers write thousands of lines of Python. One of them built a fishing app with GPS waypoints.</p>
+        </article>
+        <article class="voice">
+          <h3>Dr. Kip Glazer</h3>
+          <p class="role">Principal, Mountain View High School</p>
+          <p>Leads a school in Silicon Valley, where her students' parents build the AI that's showing up in class.</p>
+        </article>
+        <article class="voice">
+          <h3>Jigar Patel</h3>
+          <p class="role">Director of Innovation, Tuscarora Intermediate Unit 11</p>
+          <p>Drives a Fab Lab on wheels across rural Pennsylvania and builds AI tutors that run offline on a $35 computer.</p>
+        </article>
+        <article class="voice">
+          <h3>Dominick Sanders</h3>
+          <p class="role">South Carolina's first state CS supervisor</p>
+          <p>Brought coding into barbershops. He says "syntax or bust" is finally over for kids with big ideas.</p>
+        </article>
+        <article class="voice">
+          <h3>Sabba Quidwai</h3>
+          <p class="role">Design thinking &amp; AI strategist</p>
+          <p>Wanted to design video games, was told computer science was all math, and started building anyway. She teaches the SPARK method.</p>
+        </article>
+        <article class="voice">
+          <h3>Kelli Etheredge</h3>
+          <p class="role">Co-author, MakeCode AP CS Principles curriculum</p>
+          <p>Helped write a course thousands of teachers use. Now she's asking what it needs to become.</p>
+        </article>
+        <article class="voice">
+          <h3>Victoria Fudge</h3>
+          <p class="role">Director of instructional technology</p>
+          <p>Leads ed tech for 84,000 students. Her 10-80-10 rule shows exactly where students still need a teacher.</p>
+        </article>
+      </div>
+      <div class="season-note">
+        <span class="tag">Episode lineup · Coming soon</span>
+        <span>The first episode drops November 15, with new episodes after that.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="workshop">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The K12 BOSS Workshop</p>
+        <h2 class="display">Every episode comes with homework</h2>
+        <p>Each episode ends with one small project. Try it once with a student or a class, then share what happened with the community. We'll talk about what comes in on the show.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <p class="meta">20 minutes · 1 student</p>
+          <h3>The idea audit</h3>
+          <p>Ask a student what they would build if they knew it was possible. Just listen and write it down. Then share the idea with us.</p>
+        </article>
+        <article class="card">
+          <p class="meta">1 class period</p>
+          <h3>Find the gate</h3>
+          <p>Find one place where a student's idea gets stuck on "how." Remove that barrier one time and see what they build.</p>
+        </article>
+        <article class="card">
+          <p class="meta">2 days · Paper, then AI</p>
+          <h3>Paper first</h3>
+          <p>Sketch an app on paper, build it with an AI tool, then hand it to a classmate. Where do they get lost?</p>
+        </article>
+      </div>
+      <p class="workshop-foot">These are examples. The real projects come with each episode.</p>
+    </div>
+  </section>
+
+  <section class="block" id="audience">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Who it's for</p>
+        <h2 class="display">Everyone around a student</h2>
+      </div>
+      <div class="who">
+        <div><h3>Teachers</h3><p>STEM and computer science teachers, and anyone curious about what their students could build.</p></div>
+        <div><h3>Administrators</h3><p>Leaders who care about engagement, graduation and students who thrive after school.</p></div>
+        <div><h3>Parents</h3><p>Families who want to know what their kids could make and how to help them start.</p></div>
+        <div><h3>Students</h3><p>The point of all of it. We'll feature what students build, in their own voices.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="hosts">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Your hosts</p>
+        <h2 class="display">A researcher and an educator</h2>
+      </div>
+      <div class="hosts">
+        <article class="host">
+          <h3>Dr. Kartik Mangalam</h3>
+          <p class="role">AI researcher · Founder &amp; CEO, SigIQ.ai</p>
+          <p>Kartik earned his PhD in AI at UC Berkeley and did research at Google and Meta. He builds AI tutors for schools and has spent years watching the limits on what software can do disappear.</p>
+          <blockquote>Nothing good is inevitable. It is brought about by people who really want it to happen.</blockquote>
+        </article>
+        <article class="host">
+          <h3>Dr. Matt Callison</h3>
+          <p class="role">Director of Innovation, South Fayette Township School District</p>
+          <p>Matt is a learning scientist who leads innovation for a Pennsylvania school district. His job is to work out what new technology means for real students in real classrooms.</p>
+          <blockquote>When students build for a real audience, they have to think. You can build bad ideas fast, and you find out fast.</blockquote>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="band-bus community" id="community">
+  <div class="wrap community-grid">
+    <div>
+      <p class="eyebrow">Join in</p>
+      <h2 class="display">The show is the start. The community is the point.</h2>
+      <p>A place for educators to share what students built, swap feedback and help each other get started.</p>
+    </div>
+    <div class="join-card">
+      <form class="join signup" id="join-community" data-list="Community" novalidate>
+        <h3>Join the community</h3>
+        <div class="pair">
+          <div class="field">
+            <label for="join-name">Name</label>
+            <input id="join-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="join-role">I'm a</label>
+            <select id="join-role" name="role" required>
+              <option value="">Choose one</option>
+              <option>Teacher</option>
+              <option>School or district leader</option>
+              <option>Parent</option>
+              <option>Student</option>
+              <option>Something else</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="join-email">Email</label>
+          <input id="join-email" name="email" type="email" autocomplete="email" placeholder="you@school.org" required>
+        </div>
+        <div class="field">
+          <label for="join-school">School or district <small>(optional)</small></label>
+          <input id="join-school" name="school" type="text" autocomplete="organization">
+        </div>
+        <button class="btn" type="submit">Join</button>
+        <p class="msg" role="status" aria-live="polite"></p>
+      </form>
+      <div class="join-done" id="join-done" hidden tabindex="-1">
+        <p class="eyebrow">Thanks for joining</p>
+        <h3>You're on the list</h3>
+        <p>The K12 BOSS community is opening soon. We'll email your invite to <strong id="join-done-email"></strong> as soon as it does.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap foot-grid">
+    <img src="assets/logo-light.svg" alt="K12 BOSS" width="263" height="96">
+    <div class="foot-text">
+      <p>Biggest Opportunity for Student Success · Hosted by Dr. Kartik Mangalam and Dr. Matt Callison · © 2026 K12 BOSS</p>
+      <p>From the team behind <a href="https://evertutor.ai" target="_blank" rel="noopener">EverTutor</a>, the AI tutor for K-12 math.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Google Apps Script web app that appends to the "K12 BOSS — Website Signups" sheet.
+  // Can be overridden at build time with NOTIFY_ENDPOINT.
+  var NOTIFY_ENDPOINT = "https://script.google.com/macros/s/AKfycbyAMqdFivVNjY02rBhJwuCoK2TkZZLn7BlTmmCUlmrnjCHk-C281aZVS_naDLlJpxf7XQ/exec";
+  var LAUNCH = new Date(2026, 10, 15);
+
+  var el = document.getElementById("countdown");
+  if (el) {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var days = Math.round((LAUNCH - today) / 86400000);
+    el.textContent = days > 1 ? days + " days to episode 1" : days === 1 ? "Episode 1 tomorrow" : "Episode 1 is out";
+  }
+
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function fail(msg, text, field) {
+    msg.dataset.state = "error";
+    msg.textContent = text;
+    if (field) field.focus();
+  }
+
+  function wire(form) {
+    var msg = form.querySelector(".msg");
+    var button = form.querySelector("button[type=submit]");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var data = { list: form.dataset.list, page: location.href };
+      for (var i = 0; i < form.elements.length; i++) {
+        var f = form.elements[i];
+        if (f.name) data[f.name] = f.value.trim();
+      }
+      var name = form.elements.name, role = form.elements.role;
+      if (name && !data.name) return fail(msg, "Add your name.", name);
+      if (role && !data.role) return fail(msg, "Choose what describes you best.", role);
+      if (!EMAIL.test(data.email || "")) return fail(msg, "Enter an email address like you@school.org.", form.elements.email);
+      if (!NOTIFY_ENDPOINT) return fail(msg, "Signups open when this site goes live. Check back soon.");
+
+      button.disabled = true;
+      msg.dataset.state = "";
+      msg.textContent = "Saving…";
+      fetch(NOTIFY_ENDPOINT, {
+        method: "POST",
+        // text/plain keeps this a simple request, which Apps Script accepts cross-origin
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data)
+      }).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.json();
+      }).then(function (res) {
+        if (!res.ok) throw new Error(res.error);
+        if (form.id === "join-community") {
+          document.getElementById("join-done-email").textContent = data.email;
+          var done = document.getElementById("join-done");
+          form.hidden = true;
+          done.hidden = false;
+          done.focus();
+        } else {
+          msg.dataset.state = "ok";
+          msg.textContent = "You're on the list. We'll email you on launch day.";
+          form.reset();
+        }
+      }).catch(function () {
+        fail(msg, "That didn't go through. Try again in a minute.");
+      }).finally(function () { button.disabled = false; });
+    });
+  }
+  document.querySelectorAll("form.signup").forEach(wire);
+})();
+</script>

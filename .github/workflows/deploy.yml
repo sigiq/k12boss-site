@@ -1,0 +1,43 @@
+name: Deploy k12boss.com
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-k12boss
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: python3 tools/build.py
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # lets GitHub sign in to AWS as the deploy role, no stored keys
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::456318992606:role/k12boss-site-github-deploy
+          aws-region: us-east-1
+      - name: Deploy
+        run: ./tools/deploy.sh
+      - name: Summary
+        run: echo "Deployed ${GITHUB_SHA::7} to https://k12boss.com" >> "$GITHUB_STEP_SUMMARY"
