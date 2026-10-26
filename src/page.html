@@ -110,17 +110,6 @@ p { margin: 0; }
   padding-block: 22px;
 }
 .topbar img { height: 40px; width: auto; }
-.launch-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  border: 2px solid var(--ink);
-  padding: 6px 12px;
-  background: var(--bus);
-  white-space: nowrap;
-}
-.launch-pill .dot { width: 8px; height: 8px; background: var(--pen); border-radius: 50%; }
-@media (max-width: 480px) { .launch-pill .when { display: none; } }
 
 .hero {
   display: grid;
@@ -356,7 +345,6 @@ footer.site { background: var(--ink); color: var(--cream); padding-block: 48px; 
   <div class="wrap">
     <nav class="topbar" aria-label="Site">
       <img src="assets/logo.svg" alt="K12 BOSS" width="263" height="96">
-      <span class="launch-pill eyebrow"><span class="dot" aria-hidden="true"></span><span id="countdown">Episode 1</span><span class="when">· Nov 15</span></span>
     </nav>
 
     <div class="hero">
@@ -651,14 +639,6 @@ footer.site { background: var(--ink); color: var(--cream); padding-block: 48px; 
   // Google Apps Script web app that appends to the "K12 BOSS — Website Signups" sheet.
   // Can be overridden at build time with NOTIFY_ENDPOINT.
   var NOTIFY_ENDPOINT = "https://script.google.com/macros/s/AKfycbyAMqdFivVNjY02rBhJwuCoK2TkZZLn7BlTmmCUlmrnjCHk-C281aZVS_naDLlJpxf7XQ/exec";
-  var LAUNCH = new Date(2026, 10, 15);
-
-  var el = document.getElementById("countdown");
-  if (el) {
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    var days = Math.round((LAUNCH - today) / 86400000);
-    el.textContent = days > 1 ? days + " days to episode 1" : days === 1 ? "Episode 1 tomorrow" : "Episode 1 is out";
-  }
 
   var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
